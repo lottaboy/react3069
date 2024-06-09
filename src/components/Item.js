@@ -1,60 +1,102 @@
+import React, { useState } from "react";
 
-import React from 'react';
+import ItemAddForm from "./ItemAdd";
 
 const Item = () => {
-    const riddles = [
-        {
-            id: 1,
-            description: "Что можно увидеть с закрытыми глазами?",
-            options: ["Сон", "Луну", "Солнце", "Туман"],
-            correct: 0
-        },
-        {
-            id: 2,
-            description: "Что имеет зубы, но не может кусаться?",
-            options: ["Пила", "Ключ", "Замок", "Кот"],
-            correct: 0
-        },
-        {
-            id: 3,
-            description: "Что всегда приходит, но никогда не уходит?",
-            options: ["Завтра", "Вчера", "Сегодня", "Полдень"],
-            correct: 0
-        },
-        {
-            id: 4,
-            description: "Что можно поймать, но нельзя бросить?",
-            options: ["Мяч", "Рыбу", "Холод", "Камень"],
-            correct: 2
-        },
-        {
-            id: 5,
-            description: "Что идет вверх и вниз, но не двигается?",
-            options: ["Лестница", "Эскалатор", "Лифт", "Гора"],
-            correct: 0
-        },
-        {
-            id: 6,
-            description: "Что принадлежит тебе, но другие люди используют его больше, чем ты?",
-            options: ["Твое имя", "Твой дом", "Твоя машина", "Твой телефон"],
-            correct: 0
-        }
-    ];
+  const [itemArray, setItemArray] = useState([]);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [showAnswers, setShowAnswers] = useState(false);
+
+  const handleFormSubmit = (formData) => {
+    setItemArray([...itemArray, formData]);
+  };
+
+  const handleOptionChange = (itemId, option) => {
+    setUserAnswers({ ...userAnswers, [itemId]: option });
+  };
+
+  const handleShowAnswers = () => {
+    setShowAnswers(true);
+  };
+
+  const pageContent = itemArray.map((item, index) => {
+    const userAnswer = userAnswers[index];
+    const isCorrect = showAnswers && userAnswer === item.correct;
 
     return (
-        <div>
-            {riddles.map((riddle) => (
-                <div key={riddle.id} style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}>
-                    <h3>{riddle.description}</h3>
-                    <ul>
-                        {riddle.options.map((option, index) => (
-                            <li key={index}>{option}</li>
-                        ))}
-                    </ul>
-                </div>
-            ))}
+      <div key={index}>
+        <h3>{item.description}</h3>
+
+        <div className="options">
+          <div>
+            <input
+              id={`option-1-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option1}
+              onChange={() => handleOptionChange(index, item.option1)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-1-${index}`}>{item.option1}</label>
+          </div>
+
+          <div>
+            <input
+              id={`option-2-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option2}
+              onChange={() => handleOptionChange(index, item.option2)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-2-${index}`}>{item.option2}</label>
+          </div>
+
+          <div>
+            <input
+              id={`option-3-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option3}
+              onChange={() => handleOptionChange(index, item.option3)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-3-${index}`}>{item.option3}</label>
+          </div>
+
+          <div>
+            <input
+              id={`option-4-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option4}
+              onChange={() => handleOptionChange(index, item.option4)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-4-${index}`}>{item.option4}</label>
+          </div>
         </div>
+        {showAnswers && (
+          <p className={isCorrect ? "correct" : "incorrect"}>
+            {isCorrect
+              ? "Правильно!"
+              : `Неправильно. Думать надо головой, ответ: ${item.correct}`}
+          </p>
+        )}
+      </div>
     );
+  });
+
+  return (
+    <>
+      <ItemAddForm onFormSubmit={handleFormSubmit} />
+
+      <button className="button" onClick={handleShowAnswers} disabled={showAnswers}>
+        Узнать ответы
+      </button>
+      {pageContent}
+    </>
+  );
 };
 
 export default Item;
